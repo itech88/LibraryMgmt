@@ -25,9 +25,7 @@ class Book:
         author = author.lower()
         mycursor.execute("SELECT title, author, copies, available FROM Books WHERE title = %s and author = %s", (title, author))
         myresult = mycursor.fetchall()
-
         
-
         if myresult:
             print("Book found in the library:")
             # print column headers
@@ -35,9 +33,8 @@ class Book:
             print(column_names)
             for x in myresult:
                 print(x)
-        else:
-            return "Book not found in the library"
-
+        elif not myresult:
+            print("Book not found in the library") #change to return in real script
     
 
 def checkout():
