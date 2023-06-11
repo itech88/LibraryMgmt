@@ -4,7 +4,7 @@ import mysql.connector
 library = mysql.connector.connect(
   host="localhost",
   user="root",
-  password="password",
+  password=input("password: "),
   database="library"  # directly select the database
 )
 
@@ -12,38 +12,46 @@ library = mysql.connector.connect(
 mycursor = library.cursor()
 
 class Book:
-    def __init__(self, title, author):
+    def __init__(self, title, author, status):
         self.title = title.lower()
         self.author = author.lower()
-        self.status = 'available'
+        self.status = status
 
     def __str__(self):
         return f"{self.title} by {self.author}, Status: {self.status}"
 
-
     def search(self, title, author):
-            title = title.lower()
-            author = author.lower()
-            mycursor.execute("SELECT title, author FROM Books WHERE title = %s and author = %s", (title, author))
-            myresult = mycursor.fetchall()
-            if myresult:
-                for x in myresult:
-                    print(x)
-            else:
-                return "Book not found in the library"
+        title = title.lower()
+        author = author.lower()
+        mycursor.execute("SELECT title, author, copies, available FROM Books WHERE title = %s and author = %s", (title, author))
+        myresult = mycursor.fetchall()
+
+        
+
+        if myresult:
+            print("Book found in the library:")
+            # print column headers
+            column_names = [i[0] for i in mycursor.description]
+            print(column_names)
+            for x in myresult:
+                print(x)
+        else:
+            return "Book not found in the library"
+
     
 
 def checkout():
-    book = Book('','') #empty strings a placeholder
     while True:
         choice = input('Pick a menu option: Add, Checkout, Return, Search, Quit: ').lower()
         if choice in ['add', 'checkout', 'return', 'search']:
             title = input('What is the book title? ')
             author = input('Who is the author? ')
             if choice == 'search':
+                book = Book(title, author, '')
                 book.search(title, author)
-                
-                
 
 checkout()
 
+# Close the cursor and connection at the end
+mycursor.close()
+library.close()
