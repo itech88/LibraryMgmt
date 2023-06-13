@@ -59,7 +59,28 @@ def checkout():
             author = input('Who is the author? ')
             if choice == 'add':
                 book.add_book(title, author)
+        elif choice == 'quit':
+            break
+                
 
 checkout()
+
+try:
+    library = mysql.connector.connect(
+        host="localhost",
+        user="root",
+        password=input("password: "),
+        database="library"  # directly select the database
+    )
+
+    # Your database operations go here...
+
+except mysql.connector.Error as err:
+    print("Something went wrong: {}".format(err))
+
+finally:
+    if (library.is_connected()):
+        library.close()
+        print("MySQL connection is closed")
 
 

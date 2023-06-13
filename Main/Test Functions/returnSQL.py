@@ -21,34 +21,33 @@ class Book:
     def __str__(self):
         return f"{self.title} by {self.author}, Status: {self.status}"
     
-    def checkout_book(self, title, author):
+            
+    def return_book(self, title, author): #return a book to the library
         title = title.lower()
         author = author.lower()
         mycursor.execute("SELECT title, author, copies, checked_out FROM Books WHERE title = %s and author = %s", (title, author))
         myresult = mycursor.fetchall()
 
-        if myresult: #if the book exists in the library
+        if myresult: #if the book exists in the library 
             copies = myresult[0][2]
             checked_out = myresult[0][3]
-            if copies > checked_out: #if the book is available
-                mycursor.execute("UPDATE Books SET checked_out = checked_out + 1 WHERE title = %s and author = %s", (title, author))
+            if checked_out > 0: #if the book is checked out
+                mycursor.execute("UPDATE Books SET checked_out = checked_out - 1 WHERE title = %s and author = %s", (title, author))
                 library.commit()
-                print(mycursor.rowcount, "record(s) updated: a copy of the book has been checked out.")
+                print(mycursor.rowcount, "record updated with a copy returned.")
                 # Fetch the updated data
                 mycursor.execute("SELECT title, author, copies, checked_out FROM Books WHERE title = %s and author = %s", (title, author))
                 myresult = mycursor.fetchall()
                 for x in myresult:
                     print(x)
                 return True
-            else: #if the book is not available
-                print("Sorry, there are no copies of that book available.")
+            else: #if the book is not checked out
+                print("Sorry, there are no copies of that book checked out.")
                 return False
         else: #if the book does not exist in the library
             print("Sorry, that book is not in our library.")
             return False
-
-
-
+                    
 
 def checkout():
     book = Book('','') #empty strings a placeholder
@@ -57,8 +56,8 @@ def checkout():
         if choice in ['add', 'checkout', 'return', 'search']:
             title = input('What is the book title? ')
             author = input('Who is the author? ')
-            if choice == 'checkout':
-                book.checkout_book(title, author)
+            if choice == 'return':
+                book.return_book(title, author)
         elif choice == 'quit':
             break
 
