@@ -1,5 +1,5 @@
 import db_connector
-from models import Library, Book
+from models import Library
 
 
 def checkout():
@@ -40,6 +40,7 @@ def checkout():
             break
         else:
             print(f"Must be a valid option, {choice} is not")
+        my_library.close()
 
 
 checkout()
