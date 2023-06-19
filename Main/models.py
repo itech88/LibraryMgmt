@@ -15,7 +15,10 @@ class Library:
     def __init__(self):
         self.books = {}
         self.checked_out = {}
-        self.library, self.cursor = get_db_cursor
+        (
+            self.library_db,
+            self.cursor,
+        ) = get_db_cursor()  # note the added parentheses here
 
     def add_book(
         self, title, author
@@ -67,16 +70,16 @@ class Library:
     def search(self, title, author):
         title = title.lower()
         author = author.lower()
-        self.cursor.mycursor.execute(
+        self.cursor.execute(
             "SELECT title, author, copies, available FROM Books WHERE title = %s and author = %s",
             (title, author),
         )
-        myresult = self.cursor.mycursor.fetchall()
+        myresult = self.cursor.fetchall()
 
         if myresult:
             print("Book found in the library:")
             # print column headers
-            column_names = [i[0] for i in self.cursor.mycursor.description]
+            column_names = [i[0] for i in self.cursor.description]
             print(column_names)
             for x in myresult:
                 print(x)
