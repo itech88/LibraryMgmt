@@ -85,9 +85,3 @@ class Library:
                 print(x)
         elif not myresult:
             return "Book not found in the library"
-
-    def close(self):
-        if self.library_db.is_connected():
-            self.cursor.close()
-            self.library_db.close()
-            print("MySQL connection is closed")
