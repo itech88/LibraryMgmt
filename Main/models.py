@@ -15,7 +15,7 @@ class Library:
     def __init__(self):
         self.books = {}
         self.checked_out = {}
-        self.library, self.mycursor = get_db_cursor()
+        self.library, self.cursor = get_db_cursor
 
     def add_book(
         self, title, author
@@ -64,13 +64,21 @@ class Library:
         else:
             return False, "not in library"
 
-    def search(
-        self, title, author
-    ):  # replace the search function with a database query
+    def search(self, title, author):
         title = title.lower()
         author = author.lower()
-        if (title, author) in self.books:
-            book_info = self.books[(title, author)]
-            return f"Title: {book_info['book'].title}, Author: {book_info['book'].author}, Status: {book_info['book'].status}, Copies: {book_info['count']}"
-        else:
+        self.cursor.mycursor.execute(
+            "SELECT title, author, copies, available FROM Books WHERE title = %s and author = %s",
+            (title, author),
+        )
+        myresult = self.cursor.mycursor.fetchall()
+
+        if myresult:
+            print("Book found in the library:")
+            # print column headers
+            column_names = [i[0] for i in self.cursor.mycursor.description]
+            print(column_names)
+            for x in myresult:
+                print(x)
+        elif not myresult:
             return "Book not found in the library"
