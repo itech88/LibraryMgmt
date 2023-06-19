@@ -40,7 +40,11 @@ def checkout():
             break
         else:
             print(f"Must be a valid option, {choice} is not")
-        my_library.close()
+    # This point is reached after the user chooses to "quit" and the loop is exited
+    if my_library.library_db.is_connected():
+        my_library.cursor.close()
+        my_library.library_db.close()
+        print("MySQL connection is closed")
 
 
 checkout()
