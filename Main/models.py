@@ -54,19 +54,39 @@ class Library:
     def checkout_book(self, title, author):
         title = title.lower()
         author = author.lower()
-        if (
-            (title, author) in self.books
-            and self.books[(title, author)]["count"] > 0
-            and self.books[(title, author)]["book"].status == "available"
-        ):
-            self.books[(title, author)]["count"] -= 1
-            if self.books[(title, author)]["count"] == 0:
-                self.books[(title, author)]["book"].status = "checked out"
-            self.checked_out[(title, author)] = (
-                self.checked_out.get((title, author), 0) + 1
-            )
-            return True
-        else:
+        self.cursor.execute(
+            "SELECT title, author, copies, checked_out FROM Books WHERE title = %s and author = %s",
+            (title, author),
+        )
+        myresult = self.cursor.fetchall()
+
+        if myresult:  # if the book exists in the library
+            copies = myresult[0][2]
+            checked_out = myresult[0][3]
+            if copies > checked_out:  # if the book is available
+                self.cursor.execute(
+                    "UPDATE Books SET checked_out = checked_out + 1 WHERE title = %s and author = %s",
+                    (title, author),
+                )
+                self.library_db.commit()
+                print(
+                    self.cursor.rowcount,
+                    "record(s) updated: a copy of the book has been checked out.",
+                )
+                # Fetch the updated data
+                self.cursor.execute(
+                    "SELECT title, author, copies, checked_out FROM Books WHERE title = %s and author = %s",
+                    (title, author),
+                )
+                myresult = self.cursor.fetchall()
+                for x in myresult:
+                    print(x)
+                return True
+            else:  # if the book is not available
+                print("Sorry, there are no copies of that book available.")
+                return False
+        else:  # if the book does not exist in the library
+            print("Sorry, that book is not in our library.")
             return False
 
     def return_book(self, title, author):
