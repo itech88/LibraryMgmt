@@ -20,17 +20,36 @@ class Library:
             self.cursor,
         ) = get_db_cursor()  # note the added parentheses here
 
-    def add_book(
-        self, title, author
-    ):  # replace the add_book function with a database query
+    def add_book(self, title, author):
         title = title.lower()
         author = author.lower()
-        new_book = Book(title, author)
-        if (title, author) in self.books:
-            self.books[(title, author)]["count"] += 1
+
+        self.cursor.execute(
+            "SELECT title, author, copies, available FROM Books WHERE title = %s and author = %s",
+            (title, author),
+        )
+        myresult = self.cursor.fetchall()
+
+        if myresult:
+            # if book already has a copy in the library, add one to the copies column
+            self.cursor.execute(
+                "UPDATE Books SET copies = copies + 1 WHERE title = %s and author = %s",
+                (title, author),
+            )
+            self.library_db.commit()  # Use self.library_db to call the commit() method
+            print(self.cursor.rowcount, "record updated with another copy.")
+            for x in myresult:
+                print(x)
+            return True
         else:
-            self.books[(title, author)] = {"book": new_book, "count": 1}
-        return True
+            # Insert without explicitly setting the 'available' column
+            self.cursor.execute(
+                "INSERT INTO Books (title, author, copies) VALUES (%s, %s, 1)",
+                (title, author),
+            )
+            self.library_db.commit()  # Use self.library_db to call the commit() method
+            print(self.cursor.rowcount, "record inserted.")
+            return True
 
     def checkout_book(self, title, author):
         title = title.lower()
