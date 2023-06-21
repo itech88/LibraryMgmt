@@ -24,7 +24,6 @@ class Book:
     def add_book(self, title, author):
         title = title.lower()
         author = author.lower()
-        # new_book = (title, author)
 
         mycursor.execute(
             "SELECT title, author, copies, available FROM Books WHERE title = %s and author = %s",
@@ -44,8 +43,9 @@ class Book:
                 print(x)
             return True
         else:
+            # Insert without explicitly setting the 'available' column
             mycursor.execute(
-                "INSERT INTO Books (title, author, copies, available) VALUES (%s, %s, 1, 1)",
+                "INSERT INTO Books (title, author, copies) VALUES (%s, %s, 1)",
                 (title, author),
             )
             library.commit()

@@ -29,6 +29,7 @@ class Book:
             (title, author),
         )
         myresult = mycursor.fetchall()
+        print(type(myresult))
 
         if myresult:
             print("Book found in the library:")

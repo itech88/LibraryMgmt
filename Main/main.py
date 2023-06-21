@@ -27,11 +27,11 @@ def checkout():
                     )
 
             elif choice == "return":
-                success, status = my_library.return_book(title, author)
+                success = my_library.return_book(title, author)
                 if success:
                     print(f"Return of {title} by {author} was successful")
                 else:
-                    print(f"Return unsuccessful, book {status}")
+                    print(f"Return unsuccessful")
 
             elif choice == "search":
                 print(my_library.search(title, author))
