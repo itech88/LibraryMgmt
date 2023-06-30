@@ -47,4 +47,5 @@ def checkout():
         print("MySQL connection is closed")
 
 
+# checkout comment
 checkout()
