@@ -1,0 +1,10 @@
+{
+  "cSpell.words": [
+    "mycursor",
+    "myresult"
+  ],
+  "[python]": {
+    "editor.defaultFormatter": "ms-python.black-formatter"
+  },
+  "python.formatting.provider": "none"
+}
